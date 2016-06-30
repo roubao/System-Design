@@ -1,0 +1,31 @@
+System Design Principles
+part of the idea is from www.hiredintech.com
+
+1. Use Cases, Constraints
+2. Entities, Activities(ER Diagram?)
+3. Data Models, Interfaces
+4. Abstract Design
+5. Bottleneck
+6. Scaling Abstract Design (Vertical/Horisontal(MicroServices(OSGi)/Sharding)/Caching/Load Balancing/Asynchrounism/Database replication/Database partitioning)
+
+
+Sharding:
+https://docs.mongodb.com/manual/tutorial/choose-a-shard-key/
+
+1. Create a Shard Key that is Easily Divisible(Cardinality)(Dynamic/automatic re-sharding/re-chunk)
+2. Create a Shard Key that has High Degree of Randomness(Write Scaling)
+3. Create a Shard Key that Targets a Single Shard(Query Isolation?)?
+4. Shard Using a Compound Shard Key
+5. Cardinality
+TradeOffs for Query/Write
+
+Scalability David Malan from Harvard
+https://youtu.be/-W9F__D3oY4
+
+Scalability for Dummies:
+http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones
+http://www.lecloud.net/post/7994751381/scalability-for-dummies-part-2-database
+http://www.lecloud.net/post/9246290032/scalability-for-dummies-part-3-cache
+http://www.lecloud.net/post/9699762917/scalability-for-dummies-part-4-asynchronism
+
+
