@@ -1,0 +1,90 @@
+Design a url shortening service, like bit.ly
+  -- note from hiredintech.com
+
+Use Cases
+
+1. Shortening, take a url => return a much shorter url
+2. Redirection: take a short url => redirect to the original url
+3. Custom url
+4. High availability of the system
+
+Out of scope
+4. Analytics
+5. Automatic link expiration
+6. Manual link removal
+7. UI vs API
+
+//top 10
+
+15 BN new tweets
+All shortened URLs per month: 1.5BN
+Sites below the top 3: shorten 300M per month
+We: 100MLN urls each month
+
+Math:
+1. New urls per month: 100MLN
+2. 1BN requests per month
+3. 10% from shortening and 90% from redirection
+4. Requests per second: 400+(40:shortens, 360: redirection)
+5. Total urls: 5 years * 12 months * 30   == 6BN urls in 5 years
+6. 500 bytes per URL
+7. 6 bytes per hash
+8. 3TBs for all urls, 36GB for all hashes(over 5 years)
+9. New data written per second: 40 * (500 + 6) : 20K
+10. Data read per second: 360 * 506 bytes: 180K
+
+Abstract Design:
+
+1. Application service layer (services the requests)
+* Shortening service:
+* Redirection service:
+2. Data storage layer (keeps track of the hash => url mappings)
+* Acts like a big hash table: stores new mappings, and retrieves a value given a key.
+
+hashed_url = convert_to_base62(md5(original_url + random_salt))[:6]
+
+Bottlenecks:
+
+Traffic is probably not going to be very hard, data - more interesting.
+
+Scalable design:
+1. Application Service layer
+* Start with one machine
+* Measure how far it takes us(load tests)
+* Add a load balance + a cluster of machine over time: to deal with spike-y traffic, to increase availability
+
+2. Data Storage
+1) Billions of objects
+2) Each object is fairly small (< 1k)
+3) There are no relationships between the objects
+4) Reads are 9x more frequent than writes(360 reads, 40 writes per second)
+5) 3TBs of urls, 36GB of hashes
+
+MySQL:
+* Widely used
+* Mature technology
+* Clear scaling paradigms (sharding, master/slave relication, master/master replication)
+* Used by Facebook, Twitter, Google, etc.
+* Index lookups are very fast
+
+
+
+mappings
+ hash, varchar(6)
+ original_url varchar(512)
+ 
+ 2. Data Storage
+* use one MySQL table with two varchar fields
+* Create a unique index on the hash(36GB+) We want to hold it in memory to speed up loopups
+* Option 1: Vertical scaling of the MySQL machine
+* Option 2: Partition the data: 5 partitions, 600GB of data, 8GB of indexes
+* Master-slave(reading from the slaves, writes to the master)
+Think about a master-slave setup.
+
+
+
+
+
+
+
+
